@@ -137,5 +137,11 @@ class Application:
 
 
 if __name__ == "__main__":
-    app = Application()
-    app.run()
+    try:
+        app = Application()
+        app.run()
+    except Exception as e:
+        import logging
+        logger = logging.getLogger('app')
+        logger.addHandler(logging.FileHandler('error.log'))
+        logger.error(f"ERROR - {e}", exc_info=True)

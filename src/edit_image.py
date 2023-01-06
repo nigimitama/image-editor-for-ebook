@@ -6,6 +6,7 @@
 from pathlib import Path
 import numpy as np
 import cv2
+from PIL import Image
 
 
 def gamma_correction(img: np.ndarray, gamma: float = 1.5) -> np.ndarray:
@@ -15,26 +16,26 @@ def gamma_correction(img: np.ndarray, gamma: float = 1.5) -> np.ndarray:
         y = (x / 255)^gamma * 255
     """
     # 非線形関数（look up table）を作る
-    look_up_table = np.empty((1,256), np.uint8)
+    look_up_table = np.empty((1, 256), np.uint8)
     for i in range(256):
-        look_up_table[0,i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+        look_up_table[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
     # 補正をかける
     return cv2.LUT(img, look_up_table)
 
 
 def edit_image(input_path: Path, save_dir: Path):
     # read
-    # cv2.imread()は日本語があると文字化けしてエラーになるためnpを通す
-    buf = np.fromfile(str(input_path), np.uint8)
-    img = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED)
+    # cv2.imread()/cv2.imwrite()はパスが日本語を含むとき文字化けしてエラーになるためPILを使う
+    img = np.array([])
+    with Image.open(input_path) as pil_img:
+        img = np.array(pil_img)
 
-    is_gray_scale = True
-    if img.ndim == 3:
-        channel_diff = (img[:, :, 0] - img[:, :, -1])
-        is_gray_scale = channel_diff.sum() == 0
+    is_color = img.ndim == 3
+    if is_color:  # カラー画像のときは、RGBからBGRへ変換する
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
     # gamma correction
-    if is_gray_scale:
+    if not is_color:
         # gamma=1.5くらいがIrfanviewで0.6にしたときに近い（IrfanViewは逆数(1/0.6=1.66)にしてる?）
         img = gamma_correction(img, gamma=1.6)
 
@@ -46,6 +47,9 @@ def edit_image(input_path: Path, save_dir: Path):
 
     # save
     save_path = str(save_dir / input_path.name)
-    cv2.imwrite(save_path, img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
 
+    if is_color:  # カラー画像のときは、BGRからRGBへ変換する
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    Image.fromarray(img).save(save_path)
     print(f"success: {input_path} -> {save_path}")
