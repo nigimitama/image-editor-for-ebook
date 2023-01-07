@@ -26,11 +26,9 @@ class FileInputForm(ttk.LabelFrame):
             paths = Path(texts[0]).glob('*')
             paths = list(map(str, paths))
 
-        # 受け取ったファイルパスを共有の変数に格納する
         input_path.set('\n'.join(paths))
 
     def _set_default_output_path(self, input_path, output_path):
-        """入力されたファイルのパスをデフォルトの出力先にする"""
         paths: list[str] = input_path.get().split('\n')
         path = Path(paths[0])
         input_dir: Path = path if path.is_dir() else path.parent
