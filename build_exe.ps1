@@ -3,4 +3,4 @@
 # --------------------------
 
 # NOTE: --collect-data tkinterDnD をつけないとexe起動時にtkdndファイルがなくてエラーになる
-pyinstaller --name image_processor --onefile --collect-data tkinterDnD --noconsole src/app.py
+pyinstaller --name image_editor --onefile --collect-data tkinterDnD --noconsole src/app.py
