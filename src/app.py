@@ -12,7 +12,7 @@ class Application:
 
     def __init__(self):
         self.master = tkinterDnD.Tk()
-        self.master.title("Image Processor")
+        self.master.title("Image Editor for eBook")
 
         # コンポーネント（tkの用語でいうとウィジェット）間で共有する変数たち
         input_path = tk.StringVar()
