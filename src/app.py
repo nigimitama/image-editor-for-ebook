@@ -14,7 +14,7 @@ class FileInputForm(ttk.LabelFrame):
         message = tk.StringVar()
         message.set('処理したいファイルやフォルダをここにドラッグ&ドロップしてください')
         ttk.Label(self, ondrop=lambda event: self._callback(event, input_path, output_path, message),
-                  textvar=message, padding=5, width=60).grid(padx=10, pady=5)
+                  textvar=message, padding=5).grid(padx=10, pady=5)
 
     def _callback(self, event, input_path, output_path, message):
         """ドロップされたときに実行されるcallback"""
@@ -54,12 +54,12 @@ class OutputDirForm(ttk.LabelFrame):
         super().__init__(master, text="出力先の設定")
 
         frame_1 = ttk.Frame(self)
-        ttk.Label(frame_1, text="出力先:", width=60).grid(column=0, row=0)
+        ttk.Label(frame_1, text="出力先:").grid(column=0, row=0)
         ttk.Label(frame_1, textvariable=output_path).grid(column=1, row=0)
         frame_1.grid(padx=10, pady=5)
 
         frame_2 = ttk.Frame(self)
-        ttk.Button(frame_2, text="別のフォルダを選択する", command=lambda: self._ask_dir(output_path)).grid(column=1, row=1, padx=5)
+        ttk.Button(frame_2, text="別のフォルダを選択する", command=lambda: self._ask_dir(output_path)).grid(padx=5)
         frame_2.grid(padx=10, pady=5)
 
     def _ask_dir(self, output_path):
@@ -90,7 +90,7 @@ class MessageArea(ttk.Frame):
         super().__init__(master, relief=tk.FLAT)
 
         message_area = ttk.Label(self, textvar=message)
-        message_area.grid()
+        message_area.grid(padx=10)
 
 
 class ExecuteButton(ttk.Frame):
@@ -98,7 +98,7 @@ class ExecuteButton(ttk.Frame):
     def __init__(self, master, input_path, output_path, message, settings):
         super().__init__(master, relief=tk.FLAT)
         ttk.Button(self, text="実行する", width=10,
-                   command=lambda: self._process_image(input_path, output_path, message, settings)).grid(column=0, row=0, pady=10)
+                   command=lambda: self._process_image(input_path, output_path, message, settings)).grid(pady=10)
 
     def _process_image(self, input_path, output_path, message, settings):
         try:
@@ -108,11 +108,11 @@ class ExecuteButton(ttk.Frame):
             save_dir.mkdir(exist_ok=True)
 
             for path in paths:
-                edit_image(input_path=path, save_dir=save_dir, gamma=settings["gamma"], new_width=settings["width"])
+                edit_image(input_path=path, save_dir=save_dir, gamma=settings["gamma"].get(), new_width=settings["width"].get())
 
             message.set("完了しました。")
         except Exception as e:
-            message.set(f"ERROR ({e})\n\n{traceback.format_exc()}")
+            message.set(f"エラーが発生しました - {e}\n\n{traceback.format_exc()}")
 
 
 class Application:
@@ -131,18 +131,20 @@ class Application:
         }
 
         # コンポーネントたち
-        FileInputForm(self.master, input_path, output_path).grid(column=0, row=0, padx=10, pady=10)
-        OutputDirForm(self.master, output_path).grid(column=0, row=1, padx=10, pady=10)
-        SettingForm(self.master, settings).grid(column=0, row=2)
-        MessageArea(self.master, message).grid(column=0, row=3)
+        # MEMO: sticky=(tk.W, tk.E) で左右めいっぱいに伸ばす
+        FileInputForm(self.master, input_path, output_path).grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        OutputDirForm(self.master, output_path).grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        SettingForm(self.master, settings).grid(column=0, row=2, padx=10, pady=5, ipadx=20, sticky=(tk.W, tk.E))
+        MessageArea(self.master, message).grid(column=0, row=3, sticky=tk.W)
         ExecuteButton(self.master, input_path, output_path, message, settings).grid(column=0, row=4)
 
-        self.master.columnconfigure(0)
-        self.master.rowconfigure(0)
-        self.master.rowconfigure(1)
-        self.master.rowconfigure(2)
-        self.master.rowconfigure(3)
-        self.master.rowconfigure(4)
+        # ウィンドウを引き伸ばしたときに各コンポーネントも引き伸ばされるよう設定する
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)
+        self.master.rowconfigure(1, weight=1)
+        self.master.rowconfigure(2, weight=1)
+        self.master.rowconfigure(3, weight=1)
+        self.master.rowconfigure(4, weight=1)
 
     def run(self):
         self.master.mainloop()
