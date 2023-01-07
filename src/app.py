@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 import tkinterDnD  # python-tkdnd package
-from edit_image import edit_image
+from modules.editing import edit_image
+from modules.size_calculaiton import calc_total_size, to_megabyte
 
 
 class FileInputForm(ttk.LabelFrame):
@@ -110,7 +111,15 @@ class ExecuteButton(ttk.Frame):
             for path in paths:
                 edit_image(input_path=path, save_dir=save_dir, gamma=settings["gamma"].get(), new_width=settings["width"].get())
 
-            message.set("完了しました。")
+            # リサイズ前後のファイルサイズを計測する
+            output_paths = [save_dir / path.name for path in paths]
+            size_before = to_megabyte(calc_total_size(paths))
+            size_after = to_megabyte(calc_total_size(output_paths))
+
+            message.set(f"""
+処理が完了しました。
+ファイルサイズ： {size_before:.1f}MB -> {size_after:.1f}MB ({size_after/size_before - 1:.1%})
+""".strip())
         except Exception as e:
             message.set(f"エラーが発生しました - {e}\n\n{traceback.format_exc()}")
 
