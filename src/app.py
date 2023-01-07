@@ -21,6 +21,8 @@ class Application:
         settings = {
             "gamma": tk.DoubleVar(value=1.6),
             "width": tk.IntVar(value=1080),
+            "gamma_target": tk.IntVar(value=1),
+            "gamma_target_enum": { "all": 0, "gray": 1 }
         }
 
         # コンポーネントたち

@@ -21,7 +21,14 @@ class ExecuteButton(ttk.Frame):
             save_dir.mkdir(exist_ok=True)
 
             for path in paths:
-                edit_image(input_path=path, save_dir=save_dir, gamma=settings["gamma"].get(), new_width=settings["width"].get())
+                reversed_enum = {value: key for (key, value) in settings["gamma_target_enum"].items()}
+                edit_image(
+                    input_path=path,
+                    save_dir=save_dir,
+                    gamma=settings["gamma"].get(),
+                    gamma_target=reversed_enum[settings["gamma_target"].get()],
+                    new_width=settings["width"].get()
+                )
 
             # リサイズ前後のファイルサイズを計測する
             output_paths = [save_dir / path.name for path in paths]

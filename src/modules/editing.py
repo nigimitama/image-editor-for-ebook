@@ -23,7 +23,7 @@ def gamma_correction(img: np.ndarray, gamma: float) -> np.ndarray:
     return cv2.LUT(img, look_up_table)
 
 
-def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, new_width: int = 1080):
+def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, gamma_target: str = "gray", new_width: int = 1080):
     # read
     # cv2.imread()/cv2.imwrite()はパスが日本語を含むとき文字化けしてエラーになるためPILを使う
     img = np.array([])
@@ -35,9 +35,12 @@ def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, new_width: 
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
     # gamma correction
-    if not is_color:
-        # gamma=1.5くらいがIrfanviewで0.6にしたときに近い（IrfanViewは逆数(1/0.6=1.66)にしてる?）
+    # MEMO: gamma=1.5くらいがIrfanviewで0.6にしたときに近い（IrfanViewは逆数(1/0.6=1.66)にしてる?）
+    if gamma_target == "all":
         img = gamma_correction(img, gamma=gamma)
+    elif gamma_target == "gray":
+        if not is_color:
+            img = gamma_correction(img, gamma=gamma)
 
     # resize
     height, width = img.shape[0:2]
