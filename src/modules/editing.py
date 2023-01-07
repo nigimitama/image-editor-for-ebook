@@ -9,7 +9,7 @@ import cv2
 from PIL import Image
 
 
-def gamma_correction(img: np.ndarray, gamma: float = 1.5) -> np.ndarray:
+def gamma_correction(img: np.ndarray, gamma: float) -> np.ndarray:
     """ガンマ補正 (gamma correction)
 
     次のような変換を行う
@@ -23,7 +23,7 @@ def gamma_correction(img: np.ndarray, gamma: float = 1.5) -> np.ndarray:
     return cv2.LUT(img, look_up_table)
 
 
-def edit_image(input_path: Path, save_dir: Path):
+def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, new_width: int = 1080):
     # read
     # cv2.imread()/cv2.imwrite()はパスが日本語を含むとき文字化けしてエラーになるためPILを使う
     img = np.array([])
@@ -37,11 +37,10 @@ def edit_image(input_path: Path, save_dir: Path):
     # gamma correction
     if not is_color:
         # gamma=1.5くらいがIrfanviewで0.6にしたときに近い（IrfanViewは逆数(1/0.6=1.66)にしてる?）
-        img = gamma_correction(img, gamma=1.6)
+        img = gamma_correction(img, gamma=gamma)
 
     # resize
     height, width = img.shape[0:2]
-    new_width = 1080
     new_height = round((height / width) * new_width)
     img = cv2.resize(src=img, dsize=(new_width, new_height))
 
