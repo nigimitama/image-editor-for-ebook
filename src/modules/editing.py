@@ -23,7 +23,7 @@ def gamma_correction(img: np.ndarray, gamma: float) -> np.ndarray:
     return cv2.LUT(img, look_up_table)
 
 
-def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, gamma_target: str = "gray", new_width: int = 1080):
+def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, gamma_target: str = "gray", new_width: int = 1080, quality: int = 75):
     # read
     # cv2.imread()/cv2.imwrite()はパスが日本語を含むとき文字化けしてエラーになるためPILを使う
     img = np.array([])
@@ -53,5 +53,5 @@ def edit_image(input_path: Path, save_dir: Path, gamma: float = 1.6, gamma_targe
     if is_color:  # カラー画像のときは、BGRからRGBへ変換する
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    Image.fromarray(img).save(save_path)
+    Image.fromarray(img).save(save_path, quality=quality, optimize=True)
     print(f"success: {input_path} -> {save_path}")
