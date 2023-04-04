@@ -19,11 +19,12 @@ class Application:
         output_path = tk.StringVar(value=str(Path(Path().absolute().root).absolute()))
         message = tk.StringVar()
         settings = {
-            "gamma": tk.DoubleVar(value=1.6),
+            "gamma": tk.DoubleVar(value=3),
             "width": tk.IntVar(value=1080),
             "gamma_target": tk.IntVar(value=1),
             "gamma_target_enum": { "all": 0, "gray": 1 },
-            "quality": tk.IntVar(value=75),
+            "brightness": tk.IntVar(value=20),
+            "quality": tk.IntVar(value=80),
         }
 
         # コンポーネントたち
