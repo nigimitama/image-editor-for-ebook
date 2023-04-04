@@ -41,8 +41,9 @@ class ExecuteButton(ttk.Frame):
                 save_dir=save_dir,
                 gamma=settings["gamma"].get(),
                 gamma_target=reversed_enum[settings["gamma_target"].get()],
+                brightness=settings["brightness"].get(),
                 new_width=settings["width"].get(),
-                quality=settings["quality"].get()
+                quality=settings["quality"].get(),
             )
 
         # リサイズ前後のファイルサイズを計測する
