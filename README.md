@@ -1,3 +1,9 @@
+⚠️ 本アプリの機能はこちらのアプリに統合されました
+
+https://github.com/nigimitama/pdf-ebook-maker
+
+---
+
 # image-editor-for-ebook
 
 電子書籍の自作のための簡単な画像処理（ガンマ補正・リサイズ）を行うWindows用 GUIアプリ
